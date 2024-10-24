@@ -1,1 +1,1 @@
-STAR --runMode genomeGenerate \ --runThreadN 8 \ --genomeDir /usr/downloads/MICB_405_final_project \ --genomeFastaFiles /usr/downloads/ncbi_dataset_2/GCA_900637615.1_52191_A01_genomic.fna \ --sjdbGTFfile /usr/downloads/ncbi_dataset_2/genomic.gtf \--sjdbOverhang 75 \ --genomeSAsparseD 3 \ --genomeSAindexNbases 12 \ --limitGenomeGenerateRAM 14000000000
+STAR --runMode genomeGenerate \ --genomeDir STARIndex \ --genomeFastaFiles GCF_000002985.6_WBcel235_genomic.fna \ --sjdbGTFfile genomic.gtf \ --sjdbOverhang 100
