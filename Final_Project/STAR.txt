@@ -3,6 +3,6 @@ STAR --runMode genomeGenerate --genomeDir ../STARIndex/ --genomeFastaFiles ../GC
 
 
 # Running STAR alignment
-cd <Batch folder>
+cd <Batch folder/SRR number>
 
-STAR --genomeDir ../STARIndex --readFilesIn <SRR_1.fastq.gz> <SRR_2.fastq.gz> --readFilesCommand zcat --outSAMtype BAM SortedByCoordinate --quantMode GeneCounts --runThreadN 8 -alignIntronMax 10000
+STAR --genomeDir ../../STARIndex/ --readFilesIn <SRR_1.fastq.gz> <SRR_2.fastq.gz> --readFilesCommand zcat --outSAMtype BAM SortedByCoordinate --quantMode GeneCounts --runThreadN 8 --alignIntronMax 10000
