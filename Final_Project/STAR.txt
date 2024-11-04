@@ -1,2 +1,8 @@
+# STAR Indexing
 STAR --runMode genomeGenerate --genomeDir ../STARIndex/ --genomeFastaFiles ../GCF_000002985.6_WBcel235_genomic.fna --sjdbGTFfile ../genomic.gtf --sjdbOverhang 49 --runThreadN 8
 
+
+# Running STAR alignment
+cd <Batch folder>
+
+STAR --genomeDir ../STARIndex --readFilesIn <SRR_1.fastq.gz> <SRR_2.fastq.gz> --readFilesCommand zcat --outSAMtype BAM SortedByCoordinate --quantMode GeneCounts --runThreadN 8 -alignIntronMax 10000
