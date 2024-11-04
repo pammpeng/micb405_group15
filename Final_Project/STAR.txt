@@ -1,1 +1,2 @@
-STAR --runMode genomeGenerate \ --genomeDir STARIndex \ --genomeFastaFiles GCF_000002985.6_WBcel235_genomic.fna \ --sjdbGTFfile genomic.gtf \ --sjdbOverhang 100
+STAR --runMode genomeGenerate --genomeDir ../STARIndex/ --genomeFastaFiles ../GCF_000002985.6_WBcel235_genomic.fna --sjdbGTFfile ../genomic.gtf --sjdbOverhang 49 --runThreadN 8
+
