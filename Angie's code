@@ -3,7 +3,10 @@ STAR --runMode genomeGenerate --runThreadN 8 --genomeDir /Volumes/Angies_SSD/MIC
 
 > STAR Alignment - first alignment
 // STAR --genomeDir ../../genome_index/ --readFilesIn <SRR_1.fastq.gz> <SRR_2.fastq.gz> --readFilesCommand zcat --outSAMtype BAM SortedByCoordinate --quantMode GeneCounts --runThreadN 8 --alignIntronMax 10000 &
-STAR --genomeDir ../../genome_index_100/ --readFilesIn SRR20206842_1.fastq.gz SRR20206842_2.fastq.gz --readFilesCommand zcat --outSAMtype BAM SortedByCoordinate --quantMode GeneCounts --runThreadN 8 --alignIntronMax 10000 --limitBAMsortRAM 14000000000 &
+STAR --genomeDir ../../genome_index_100/ --readFilesIn SRR20206842_1.fastq.gz SRR20206842_2.fastq.gz --readFilesCommand zcat --outSAMtype BAM SortedByCoordinate --quantMode GeneCounts --runThreadN 8 --alignIntronMax 10000 --outFilterMatchNmin 18 --alignEndsType Local --outFilterScoreMin 30 --outFilterMultimapNmax 20 --limitBAMsortRAM 14000000000 &
 
 > STAR Genome Index - second generation 
 STAR --runMode genomeGenerate --runThreadN 8 --genomeDir /Volumes/Angies_SSD/MICB_405/genome_index --genomeFastaFiles /users/angie/downloads/ncbi_dataset_2/c_elegans_chromosome_1.fasta /users/angie/downloads/ncbi_dataset_2/c_elegans_chromosome_2.fasta /users/angie/downloads/ncbi_dataset_2/c_elegans_chromosome_3.fasta /users/angie/downloads/ncbi_dataset_2/c_elegans_chromosome_4.fasta /users/angie/downloads/ncbi_dataset_2/c_elegans_chromosome_5.fasta /users/angie/downloads/ncbi_dataset_2/c_elegans_chromosome_X.fasta /users/angie/downloads/ncbi_dataset_2/c_elegans_chromosome_MT.fasta --sjdbGTFfile /users/angie/downloads/ncbi_dataset_2/genomic.gtf --sjdbGTFfile /volumes/Angies_SSD/MICB_405/SJ.out.tab --sjdbOverhang 49 --genomeSAsparseD 2 --genomeSAindexNbases 13 --limitGenomeGenerateRAM 14000000000 
+
+> STAR alignment - 27
+STAR --genomeDir ../../genome_index_27/ --readFilesIn SRR20206813_1.fastq.gz SRR20206813_2.fastq.gz --readFilesCommand zcat --outSAMtype BAM SortedByCoordinate --quantMode GeneCounts --runThreadN 8 --alignIntronMax 10000 --outFilterMatchNmin 18 --limitBAMsortRAM 14000000000 &
