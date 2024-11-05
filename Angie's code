@@ -10,3 +10,8 @@ STAR --runMode genomeGenerate --runThreadN 8 --genomeDir /Volumes/Angies_SSD/MIC
 
 > STAR alignment - 27
 STAR --genomeDir ../../genome_index_27/ --readFilesIn SRR20206813_1.fastq.gz SRR20206813_2.fastq.gz --readFilesCommand zcat --outSAMtype BAM SortedByCoordinate --quantMode GeneCounts --runThreadN 8 --alignIntronMax 10000 --outFilterMatchNmin 18 --limitBAMsortRAM 14000000000 &
+
+wget for F1_2
+
+wget -nc ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR202/014/SRR20206814/SRR20206814_2.fastq.gz &
+wget -nc ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR202/014/SRR20206814/SRR20206814_1.fastq.gz &
