@@ -15,3 +15,69 @@ wget for F1_2
 
 wget -nc ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR202/014/SRR20206814/SRR20206814_2.fastq.gz &
 wget -nc ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR202/014/SRR20206814/SRR20206814_1.fastq.gz &
+
+DESEQ R CODE:
+Differential expression analysis of between conditions - relative to F1 (as reference)
+```{r DESeq2 libraries}
+library(Rsubread)
+library(data.table)
+library(DESeq2)
+```
+```{r Metadata table generation}
+metadata_df <- read.csv("/Volumes/Angies_SSD/MICB_405/read_alignments/final_count_matrix.txt", header = TRUE)
+# Define metadata information
+sample_ids <- c("F1_1", "F1_3", "F3_1", "F3_3")
+condition <- c("F1", "F1", "F3", "F3")
+replicate <- c(1, 2, 1, 2)
+# Create metadata data frame
+metadata_df <- data.frame(SampleID = sample_ids, Condition = condition, Replicate = replicate)
+print(metadata_df)
+```
+```{r Differential gene expression analysis in DESeq2}
+# Import count matrix file
+count_matrix <- read.table("/volumes/Angies_SSD/MICB_405/read_alignments/final_count_matrix_copy.txt", header = TRUE, row.names = 1, sep = "\t")
+# Specify F1 as the reference level for the "Condition" variable & design formula
+metadata_df$Condition <- as.factor(metadata_df$Condition)
+metadata_df$Condition <- relevel(metadata_df$Condition, ref = "F1")
+design <- ~ Condition
+# Build dataset object and complete differential gene expression analysis
+dds <- DESeqDataSetFromMatrix(countData = count_matrix, colData = metadata_df, design = design)
+DESeq_dds <- DESeq(dds)
+# Extract results and statistically significant DEGs
+DESeq2_res <- results(DESeq_dds)
+DESeq2_res <- as.data.frame(DESeq2_res)
+DESeq2_res <- DESeq2_res[!is.na(DESeq2_res$padj), ]
+```
+Visualization of differential gene expression analysis
+```{r DESeq2 Data visualization required libraries}
+library(ggfortify)
+library(ggplot2)
+library(pheatmap)
+library(VennDiagram)
+```
+```{r PCA plot - clustering of samples based on similarity in DEG}
+# Perform VST on dds
+DESeq_dds <- vst(DESeq_dds)
+# Extract Normalized Counts
+normalized_counts <- assay(DESeq_dds)
+# Perform PCA
+pca <- prcomp(t(assay(DESeq_dds)))
+# Convert PCA results to data frame 
+pca_df <- as.data.frame(pca$x)
+pca_df$Condition <- factor(metadata_df$Condition)
+# Create PCA plot with ggplot
+pca_plot <- autoplot(pca, data = pca_df) + geom_point(aes(color = Condition), size = 4) + geom_text(aes(label = sample_ids), vjust = 1.5, hjust = 0, size = 2.5) + labs(color = "Condition") + theme(panel.grid = element_blank(), panel.background = element_rect(fill = "white"), axis.line = element_line(color = "black"),axis.title.x = element_text(size = 14), axis.title.y = element_text(size = 14)) 
+print(pca_plot)
+ggsave("/Volumes/Angies_SSD/MICB_405/PCA_plot.png", pca_plot, width = 6, height = 4, dpi = 500)
+```
+```{r Heatmap }
+# Subset count matrix to include only differentially expressed genes
+significant_DEGs <- rownames(DESeq2_res)[which(DESeq2_res$padj < 0.05)]  
+significant_count_matrix <- count_matrix[significant_DEGs, ]
+# Calculate z-scores
+z_scores <- t(scale(t(significant_count_matrix)))
+# Create heatmap using pheatmap
+heatmap <- pheatmap(z_scores, cluster_rows = TRUE, cluster_cols = FALSE, scale = "none", main = "Heatmap of Differentially Expressed Genes", fontsize = 8, show_row_dendrogram = FALSE, show_col_dendrogram = FALSE)
+# Save the heatmap
+ggsave("/Volumes/Angies_SSD/MICB_405/Heatmap.png", plot = heatmap, width = 10, height = 7, dpi = 300)
+```
