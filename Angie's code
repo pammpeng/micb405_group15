@@ -17,67 +17,56 @@ wget -nc ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR202/014/SRR20206814/SRR20206814_2
 wget -nc ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR202/014/SRR20206814/SRR20206814_1.fastq.gz &
 
 DESEQ R CODE:
-Differential expression analysis of between conditions - relative to F1 (as reference)
-```{r DESeq2 libraries}
-library(Rsubread)
-library(data.table)
-library(DESeq2)
-```
+Comparison 1: Transgenerational Comparison
 ```{r Metadata table generation}
-metadata_df <- read.csv("/Volumes/Angies_SSD/MICB_405/read_alignments/final_count_matrix.txt", header = TRUE)
 # Define metadata information
-sample_ids <- c("F1_1", "F1_3", "F3_1", "F3_3")
-condition <- c("F1", "F1", "F3", "F3")
-replicate <- c(1, 2, 1, 2)
+transgenerational_sample_ids <- c("F1_1", "F1_2", "F1_3", "F1_4", "F1_5", "F3_1", "F3_2", "P0_1", "P0_2", "P0_3")
+transgenerational_condition <- c("F1", "F1", "F1", "F1", "F1", "F3", "F3", "P0", "P0", "P0")
+transgenerational_replicate <- c(1, 2, 3, 4, 5, 1, 2, 1, 2, 3)
 # Create metadata data frame
-metadata_df <- data.frame(SampleID = sample_ids, Condition = condition, Replicate = replicate)
-print(metadata_df)
+transgenerational_metadata_df <- data.frame(SampleID = transgenerational_sample_ids, Condition = transgenerational_condition, Replicate = transgenerational_replicate)
 ```
 ```{r Differential gene expression analysis in DESeq2}
 # Import count matrix file
-count_matrix <- read.table("/volumes/Angies_SSD/MICB_405/read_alignments/final_count_matrix_copy.txt", header = TRUE, row.names = 1, sep = "\t")
-# Specify F1 as the reference level for the "Condition" variable & design formula
-metadata_df$Condition <- as.factor(metadata_df$Condition)
-metadata_df$Condition <- relevel(metadata_df$Condition, ref = "F1")
+transgenerational_count_matrix <- read.table("/volumes/Angies_SSD/MICB_405/read_alignments/transgenerational_final_count_matrix.txt", header = TRUE, row.names = 1, sep = "\t")
+# Specify P0 as the reference level for the "Condition" variable & design formula
+transgenerational_metadata_df$Condition <- as.factor(transgenerational_metadata_df$Condition)
+transgenerational_metadata_df$Condition <- relevel(transgenerational_metadata_df$Condition, ref = "P0")
 design <- ~ Condition
-# Build dataset object and complete differential gene expression analysis
-dds <- DESeqDataSetFromMatrix(countData = count_matrix, colData = metadata_df, design = design)
-DESeq_dds <- DESeq(dds)
+# Build dataset object and complete DEG analysis
+transgenerational_dds <- DESeqDataSetFromMatrix(countData = transgenerational_count_matrix, colData = transgenerational_metadata_df, design = design)
+transgenerational_DESeq <- DESeq(transgenerational_dds)
 # Extract results and statistically significant DEGs
-DESeq2_res <- results(DESeq_dds)
-DESeq2_res <- as.data.frame(DESeq2_res)
-DESeq2_res <- DESeq2_res[!is.na(DESeq2_res$padj), ]
+transgenerational_DESeq_results <- results(transgenerational_DESeq)
+transgenerational_DESeq_results <- as.data.frame(transgenerational_DESeq_results)
+transgenerational_DESeq_results <- transgenerational_DESeq_results[!is.na(transgenerational_DESeq_results$padj), ]
+write.csv(transgenerational_DESeq_results, file = "/Volumes/Angies_SSD/MICB_405/transgenerational_DESeq2_results.csv", row.names = FALSE)
 ```
-Visualization of differential gene expression analysis
-```{r DESeq2 Data visualization required libraries}
-library(ggfortify)
-library(ggplot2)
-library(pheatmap)
-library(VennDiagram)
+Visualization of Differential Gene Expression Analysis
+```{r PCA plot - clustering of samples based on similarity in differentially expressed genes}
+# Perform variance stabilizing transformation (VST) on dds
+transgenerational_dds <- vst(transgenerational_dds)
+# Perform principal component analysis (PCA) and convert results into a data frame
+transgenerational_pca <- prcomp(t(assay(transgenerational_dds)))
+transgenerational_pca_df <- as.data.frame(transgenerational_pca$x)
+  # Define condition colours for subsequent PCA plot
+  transgenerational_pca_df$Condition <- factor(transgenerational_metadata_df$Condition)
+# Create PCA plot with ggofortify package
+transgenerational_pca_plot <- autoplot(transgenerational_pca, data = transgenerational_pca_df) + geom_point(aes(color = Condition), size = 4) + geom_text(aes(label = transgenerational_sample_ids), vjust = 1.5, hjust = 0, size = 2.5) + labs(color = "Condition") + theme(panel.grid = element_blank(), panel.background = element_rect(fill = "white"), axis.line = element_line(color = "black"),axis.title.x = element_text(size = 14), axis.title.y = element_text(size = 14)) 
+print(transgenerational_pca_plot)
+# Save the PCA plot to a file
+ggsave("/Volumes/Angies_SSD/MICB_405/transgenerational_PCA_plot.png", plot = transgenerational_pca_plot, width = 6, height = 4, dpi = 500)
 ```
-```{r PCA plot - clustering of samples based on similarity in DEG}
-# Perform VST on dds
-DESeq_dds <- vst(DESeq_dds)
-# Extract Normalized Counts
-normalized_counts <- assay(DESeq_dds)
-# Perform PCA
-pca <- prcomp(t(assay(DESeq_dds)))
-# Convert PCA results to data frame 
-pca_df <- as.data.frame(pca$x)
-pca_df$Condition <- factor(metadata_df$Condition)
-# Create PCA plot with ggplot
-pca_plot <- autoplot(pca, data = pca_df) + geom_point(aes(color = Condition), size = 4) + geom_text(aes(label = sample_ids), vjust = 1.5, hjust = 0, size = 2.5) + labs(color = "Condition") + theme(panel.grid = element_blank(), panel.background = element_rect(fill = "white"), axis.line = element_line(color = "black"),axis.title.x = element_text(size = 14), axis.title.y = element_text(size = 14)) 
-print(pca_plot)
-ggsave("/Volumes/Angies_SSD/MICB_405/PCA_plot.png", pca_plot, width = 6, height = 4, dpi = 500)
-```
-```{r Heatmap }
+```{r Heatmap - similarity in gene expression}
 # Subset count matrix to include only differentially expressed genes
-significant_DEGs <- rownames(DESeq2_res)[which(DESeq2_res$padj < 0.05)]  
-significant_count_matrix <- count_matrix[significant_DEGs, ]
+transgenerational_significant_DEGs <- rownames(transgenerational_DESeq_results)[which(transgenerational_DESeq_results$padj < 0.05)]  
+transgenerational_statistically_significant_count_matrix <- transgenerational_count_matrix[transgenerational_significant_DEGs, ]
 # Calculate z-scores
-z_scores <- t(scale(t(significant_count_matrix)))
-# Create heatmap using pheatmap
-heatmap <- pheatmap(z_scores, cluster_rows = TRUE, cluster_cols = FALSE, scale = "none", main = "Heatmap of Differentially Expressed Genes", fontsize = 8, show_row_dendrogram = FALSE, show_col_dendrogram = FALSE)
-# Save the heatmap
-ggsave("/Volumes/Angies_SSD/MICB_405/Heatmap.png", plot = heatmap, width = 10, height = 7, dpi = 300)
+transgenerational_z_scores <- t(scale(t(transgenerational_statistically_significant_count_matrix)))
+# Create heatmap plot using Pheatmap package
+transgenerational_heatmap <- pheatmap(transgenerational_z_scores, cluster_rows = TRUE, cluster_cols = FALSE, scale = "none", main = "Heatmap of Differentially Expressed Genes", fontsize = 8, show_row_dendrogram = FALSE, show_col_dendrogram = FALSE)
+print(transgenerational_heatmap)
+  # check code for show_row_dendrogram = FALSE, show_col_dendrogram = FALSE
+# Save the heatmap plot into a file
+ggsave("/Volumes/Angies_SSD/MICB_405/transgenerational_heatmap.png", transgenerational_heatmap, width = 10, height = 7, dpi = 500)
 ```
