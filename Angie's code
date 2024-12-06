@@ -1,20 +1,14 @@
-> STAR Genome Index - first generation
+> STAR Genome Index 
 STAR --runMode genomeGenerate --runThreadN 8 --genomeDir /Volumes/Angies_SSD/MICB_405/genome_index --genomeFastaFiles /users/angie/downloads/ncbi_dataset_2/c_elegans_chromosome_1.fasta /users/angie/downloads/ncbi_dataset_2/c_elegans_chromosome_2.fasta /users/angie/downloads/ncbi_dataset_2/c_elegans_chromosome_3.fasta /users/angie/downloads/ncbi_dataset_2/c_elegans_chromosome_4.fasta /users/angie/downloads/ncbi_dataset_2/c_elegans_chromosome_5.fasta /users/angie/downloads/ncbi_dataset_2/c_elegans_chromosome_X.fasta /users/angie/downloads/ncbi_dataset_2/c_elegans_chromosome_MT.fasta --sjdbGTFfile /users/angie/downloads/ncbi_dataset_2/genomic.gtf --sjdbOverhang 49 --genomeSAsparseD 2 --genomeSAindexNbases 13 --limitGenomeGenerateRAM 14000000000
 
-> STAR Alignment - first alignment
-// STAR --genomeDir ../../genome_index/ --readFilesIn <SRR_1.fastq.gz> <SRR_2.fastq.gz> --readFilesCommand zcat --outSAMtype BAM SortedByCoordinate --quantMode GeneCounts --runThreadN 8 --alignIntronMax 10000 &
-STAR --genomeDir ../../genome_index_100/ --readFilesIn SRR20206842_1.fastq.gz SRR20206842_2.fastq.gz --readFilesCommand zcat --outSAMtype BAM SortedByCoordinate --quantMode GeneCounts --runThreadN 8 --alignIntronMax 10000 --outFilterMatchNmin 18 --alignEndsType Local --outFilterScoreMin 30 --outFilterMultimapNmax 20 --limitBAMsortRAM 14000000000 &
+> STAR Alignment 
+STAR --genomeDir ../../genome_index_27/ --readFilesIn [SRR...].fastq.gz [SRR...].fastq.gz --readFilesCommand zcat --outSAMtype BAM SortedByCoordinate --quantMode GeneCounts --runThreadN 8 --alignIntronMax 10000 --outFilterMatchNmin 18 --limitBAMsortRAM 14000000000 &
 
-> STAR Genome Index - second generation 
-STAR --runMode genomeGenerate --runThreadN 8 --genomeDir /Volumes/Angies_SSD/MICB_405/genome_index --genomeFastaFiles /users/angie/downloads/ncbi_dataset_2/c_elegans_chromosome_1.fasta /users/angie/downloads/ncbi_dataset_2/c_elegans_chromosome_2.fasta /users/angie/downloads/ncbi_dataset_2/c_elegans_chromosome_3.fasta /users/angie/downloads/ncbi_dataset_2/c_elegans_chromosome_4.fasta /users/angie/downloads/ncbi_dataset_2/c_elegans_chromosome_5.fasta /users/angie/downloads/ncbi_dataset_2/c_elegans_chromosome_X.fasta /users/angie/downloads/ncbi_dataset_2/c_elegans_chromosome_MT.fasta --sjdbGTFfile /users/angie/downloads/ncbi_dataset_2/genomic.gtf --sjdbGTFfile /volumes/Angies_SSD/MICB_405/SJ.out.tab --sjdbOverhang 49 --genomeSAsparseD 2 --genomeSAindexNbases 13 --limitGenomeGenerateRAM 14000000000 
 
-> STAR alignment - 27
-STAR --genomeDir ../../genome_index_27/ --readFilesIn SRR20206813_1.fastq.gz SRR20206813_2.fastq.gz --readFilesCommand zcat --outSAMtype BAM SortedByCoordinate --quantMode GeneCounts --runThreadN 8 --alignIntronMax 10000 --outFilterMatchNmin 18 --limitBAMsortRAM 14000000000 &
+#wget samples from European Nucleotide Archive (ENA) Database
 
-wget for F1_2
-
-wget -nc ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR202/014/SRR20206814/SRR20206814_2.fastq.gz &
-wget -nc ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR202/014/SRR20206814/SRR20206814_1.fastq.gz &
+wget -nc ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR202/014/SRR20206814/[SRR...].fastq.gz &
+wget -nc ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR202/014/SRR20206814/[SRR...].fastq.gz &
 
 DESEQ R CODE:
 Comparison 1: Transgenerational Comparison
