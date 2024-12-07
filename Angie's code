@@ -4,9 +4,7 @@ STAR --runMode genomeGenerate --runThreadN 8 --genomeDir /Volumes/Angies_SSD/MIC
 > STAR Alignment 
 STAR --genomeDir ../../genome_index_27/ --readFilesIn [SRR...].fastq.gz [SRR...].fastq.gz --readFilesCommand zcat --outSAMtype BAM SortedByCoordinate --quantMode GeneCounts --runThreadN 8 --alignIntronMax 10000 --outFilterMatchNmin 18 --limitBAMsortRAM 14000000000 &
 
-
-#wget samples from European Nucleotide Archive (ENA) Database
-
+> wget to obtain datasets from the European Nucleotide Archive (ENA) Database
 wget -nc ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR202/014/SRR20206814/[SRR...].fastq.gz &
 wget -nc ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR202/014/SRR20206814/[SRR...].fastq.gz &
 
