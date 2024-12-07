@@ -304,7 +304,7 @@ print(generational_heatmap)
 ggsave("/Volumes/Angies_SSD/MICB_405/generational_comparison/generational_heatmap.png", plot = generational_heatmap, width = 6, height = 4, dpi = 500)
 ```
 Gene Set Enrichment Analysis (GSEA) - determine functionality of differentially expressed genes
-```{r Venn Diagram of shared and uniquely expressed genes}
+```{r Extract shared and uniquely expressed genes}
 # Based on the workflow of this analysis, it is easier to re-run the DESeq during this step due to data transformation required
 # Import count matrix file
 generational_count_matrix <- read.table("/volumes/Angies_SSD/MICB_405/generational_comparison/generational_final_count_matrix.txt", header = TRUE, row.names = 1, sep = "\t")
